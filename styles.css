@@ -163,6 +163,14 @@ header h1 {
     background: #f5f5f5;
 }
 
+.day-cell.weekend {
+    background: #f0f0f0;
+}
+
+.day-cell.weekend:hover {
+    background: #e8e8e8;
+}
+
 .day-number {
     font-size: 0.75em;
     font-weight: 600;

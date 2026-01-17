@@ -132,9 +132,15 @@ class LinearCalendar {
 
                 const currentDate = new Date(this.currentYear, monthIndex, day);
                 const isToday = currentDate.toDateString() === today.toDateString();
+                const dayOfWeek = currentDate.getDay();
+                const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
 
                 if (isToday) {
                     dayCell.classList.add('today');
+                }
+
+                if (isWeekend) {
+                    dayCell.classList.add('weekend');
                 }
 
                 const dayNumber = document.createElement('div');
@@ -173,8 +179,8 @@ class LinearCalendar {
 
     renderMonthEvents(daysGrid, monthIndex) {
         const monthEvents = this.events.filter(event => {
-            const startDate = new Date(event.startDate);
-            const endDate = new Date(event.endDate);
+            const startDate = this.parseLocalDate(event.startDate);
+            const endDate = this.parseLocalDate(event.endDate);
             const monthStart = new Date(this.currentYear, monthIndex, 1);
             const monthEnd = new Date(this.currentYear, monthIndex + 1, 0);
 
@@ -182,8 +188,8 @@ class LinearCalendar {
         });
 
         monthEvents.forEach((event, eventIndex) => {
-            const startDate = new Date(event.startDate);
-            const endDate = new Date(event.endDate);
+            const startDate = this.parseLocalDate(event.startDate);
+            const endDate = this.parseLocalDate(event.endDate);
 
             const monthStart = new Date(this.currentYear, monthIndex, 1);
             const monthEnd = new Date(this.currentYear, monthIndex + 1, 0);
@@ -247,11 +253,11 @@ class LinearCalendar {
     getEventsByDate(year, month, day) {
         return this.events.filter(event => {
             const currentDate = new Date(year, month, day);
-            const startDate = new Date(event.startDate);
-            const endDate = new Date(event.endDate);
+            const startDate = this.parseLocalDate(event.startDate);
+            const endDate = this.parseLocalDate(event.endDate);
 
             return currentDate >= startDate && currentDate <= endDate;
-        }).sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
+        }).sort((a, b) => this.parseLocalDate(a.startDate) - this.parseLocalDate(b.startDate));
     }
 
     renderEventsList() {
@@ -259,10 +265,10 @@ class LinearCalendar {
 
         const upcomingEvents = this.events
             .filter(event => {
-                const eventEndDate = new Date(event.endDate);
+                const eventEndDate = this.parseLocalDate(event.endDate);
                 return eventEndDate >= new Date() || eventEndDate.getFullYear() === this.currentYear;
             })
-            .sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
+            .sort((a, b) => this.parseLocalDate(a.startDate) - this.parseLocalDate(b.startDate));
 
         if (upcomingEvents.length === 0) {
             eventsList.innerHTML = '<div class="empty-state">No upcoming events. Click "Add Event" to create one!</div>';
@@ -287,8 +293,8 @@ class LinearCalendar {
 
         const date = document.createElement('div');
         date.className = 'event-item-date';
-        const startDate = new Date(event.startDate);
-        const endDate = new Date(event.endDate);
+        const startDate = this.parseLocalDate(event.startDate);
+        const endDate = this.parseLocalDate(event.endDate);
         if (event.startDate === event.endDate) {
             date.textContent = this.formatDate(startDate);
         } else {
@@ -313,6 +319,13 @@ class LinearCalendar {
     formatDate(date) {
         const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
         return date.toLocaleDateString('en-US', options);
+    }
+
+    parseLocalDate(dateString) {
+        // Parse date string as local date to avoid timezone issues
+        // Input format: "YYYY-MM-DD"
+        const [year, month, day] = dateString.split('-').map(Number);
+        return new Date(year, month - 1, day);
     }
 
     openModal(event = null, prefilledDate = null) {
