@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linear Calendar</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Linear Calendar <span id="currentYear"></span></h1>
+            <div class="controls">
+                <button id="prevYear" class="year-btn">← Previous Year</button>
+                <button id="addEventBtn" class="add-btn">+ Add Event</button>
+                <button id="nextYear" class="year-btn">Next Year →</button>
+            </div>
+            <div class="view-controls">
+                <label>View Mode:</label>
+                <button id="alignByWeekday" class="view-btn active">Align by Weekday</button>
+                <button id="alignByFirstDay" class="view-btn">Align by First Day</button>
+            </div>
+        </header>
+
+        <div class="calendar-wrapper">
+            <div class="timeline" id="timeline">
+                <!-- Timeline will be generated here -->
+            </div>
+        </div>
+
+        <div class="events-list">
+            <h2>Upcoming Events</h2>
+            <div id="eventsList"></div>
+        </div>
+    </div>
+
+    <!-- Modal for adding/editing events -->
+    <div id="eventModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modalTitle">Add Event</h2>
+            <form id="eventForm">
+                <div class="form-group">
+                    <label for="eventTitle">Event Title:</label>
+                    <input type="text" id="eventTitle" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="eventStartDate">Start Date:</label>
+                        <input type="date" id="eventStartDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="eventEndDate">End Date:</label>
+                        <input type="date" id="eventEndDate" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Category:</label>
+                    <div class="color-presets">
+                        <button type="button" class="color-preset" data-color="#4CAF50" data-category="Personal" style="background: #4CAF50;">Personal</button>
+                        <button type="button" class="color-preset" data-color="#2196F3" data-category="Work" style="background: #2196F3;">Work</button>
+                        <button type="button" class="color-preset" data-color="#FF9800" data-category="Important" style="background: #FF9800;">Important</button>
+                        <button type="button" class="color-preset" data-color="#9C27B0" data-category="Family" style="background: #9C27B0;">Family</button>
+                        <button type="button" class="color-preset" data-color="#F44336" data-category="Urgent" style="background: #F44336;">Urgent</button>
+                        <button type="button" class="color-preset" data-color="#00BCD4" data-category="Event" style="background: #00BCD4;">Event</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="eventColor">Custom Color:</label>
+                    <input type="color" id="eventColor" value="#4CAF50">
+                </div>
+                <div class="form-group">
+                    <label for="eventDescription">Description (optional):</label>
+                    <textarea id="eventDescription" rows="3"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="save-btn">Save Event</button>
+                    <button type="button" id="deleteEventBtn" class="delete-btn" style="display: none;">Delete</button>
+                    <button type="button" class="cancel-btn">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
