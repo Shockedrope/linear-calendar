@@ -145,7 +145,7 @@ header h1 {
 .day-cell {
     background: white;
     padding: 4px 2px;
-    min-height: 60px;
+    height: 120px;
     position: relative;
     transition: background 0.3s ease;
     display: flex;
@@ -153,6 +153,7 @@ header h1 {
     border-right: 1px solid #e0e0e0;
     border-bottom: 1px solid #e0e0e0;
     align-items: center;
+    overflow: hidden;
 }
 
 .day-cell:hover {
@@ -209,6 +210,8 @@ header h1 {
     z-index: 5;
     left: 0;
     right: 0;
+    height: 16px;
+    line-height: 12px;
 }
 
 .event-marker:hover {

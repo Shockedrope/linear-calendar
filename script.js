@@ -187,7 +187,22 @@ class LinearCalendar {
             return (startDate <= monthEnd && endDate >= monthStart);
         });
 
-        monthEvents.forEach((event, eventIndex) => {
+        // Sort events by start date, then by duration (longer first)
+        monthEvents.sort((a, b) => {
+            const aStart = this.parseLocalDate(a.startDate);
+            const bStart = this.parseLocalDate(b.startDate);
+            if (aStart.getTime() !== bStart.getTime()) {
+                return aStart - bStart;
+            }
+            const aEnd = this.parseLocalDate(a.endDate);
+            const bEnd = this.parseLocalDate(b.endDate);
+            return bEnd - aEnd; // Longer events first
+        });
+
+        // Track which rows are occupied by which column ranges
+        const rows = [];
+
+        monthEvents.forEach((event) => {
             const startDate = this.parseLocalDate(event.startDate);
             const endDate = this.parseLocalDate(event.endDate);
 
@@ -213,12 +228,43 @@ class LinearCalendar {
 
             if (startCol > 0) {
                 const spanDays = endDay - startDay + 1;
+                const endCol = startCol + spanDays - 1;
+
+                // Find the first available row for this event
+                let rowIndex = 0;
+                let foundRow = false;
+
+                for (let r = 0; r < rows.length; r++) {
+                    let canFit = true;
+                    for (let col = startCol; col <= endCol; col++) {
+                        if (rows[r][col]) {
+                            canFit = false;
+                            break;
+                        }
+                    }
+                    if (canFit) {
+                        rowIndex = r;
+                        foundRow = true;
+                        break;
+                    }
+                }
+
+                // If no row found, create a new one
+                if (!foundRow) {
+                    rowIndex = rows.length;
+                    rows.push({});
+                }
+
+                // Mark columns as occupied in this row
+                for (let col = startCol; col <= endCol; col++) {
+                    rows[rowIndex][col] = true;
+                }
 
                 const eventMarker = document.createElement('div');
                 eventMarker.className = 'event-marker';
                 eventMarker.style.backgroundColor = event.color;
                 eventMarker.style.gridColumn = `${startCol} / span ${spanDays}`;
-                eventMarker.style.top = `${20 + eventIndex * 20}px`;
+                eventMarker.style.top = `${20 + rowIndex * 18}px`;
                 eventMarker.textContent = event.title;
 
                 eventMarker.addEventListener('click', (e) => {
